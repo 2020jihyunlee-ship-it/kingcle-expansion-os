@@ -1,0 +1,187 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+# Technical Requirements Document (TRD)
+
+## 1. Executive Technical Summary
+- **Project Overview**: KingCL AI Growth Planner는 Next.js 15 기반의 웹 SaaS로, 직장인들의 개인 성장 목표 설정, 관리, 진행 상황 확인을 돕고 AI 기반 코칭을 제공하여 실행력을 향상시키는 것을 목표로 한다. 핵심 기능은 AI 루틴 자동화 플래너, GPT 성장 코치 챗봇, 성장 대시보드이다.
+- **Core Technology Stack**: Next.js 15, TypeScript, Tailwind CSS, Supabase, @tanstack/react-query, shadcn/ui, lucide-react, es-toolkit, date-fns를 사용하여 개발한다. Next.js는 서버 사이드 렌더링(SSR) 및 정적 사이트 생성(SSG)을 지원하여 초기 로딩 속도를 개선하고 SEO 최적화를 용이하게 한다. Supabase는 인증, 데이터베이스, 스토리지 등의 백엔드 기능을 제공하며, @tanstack/react-query는 서버 상태 관리를 효율적으로 처리한다.
+- **Key Technical Objectives**:
+    - **Performance**: 초기 로딩 속도 2초 이내, API 응답 시간 500ms 이내
+    - **Scalability**: 1,000명의 유료 사용자 및 20개의 팀 요금제를 안정적으로 지원
+    - **Reliability**: 99.9% 이상의 시스템 가용성
+- **Critical Technical Assumptions**:
+    - 직장인들이 목표 관리 툴에 월 ₩10,000 지불 의향이 있다는 가정
+    - 시각화된 진행률 정보가 목표 달성률을 실질적으로 높인다는 가정
+    - GPT 기반 코칭은 텍스트 인터페이스만으로도 충분한 만족도를 준다는 가정
+
+## 2. Tech Stack
+
+| Category              | Technology / Library        | Reasoning (Why it's chosen for this project)                                                                                                                                                                                                                                                                                                                                                             |
+| --------------------- | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 프레임워크            | Next.js 15                 | 서버 사이드 렌더링(SSR), 정적 사이트 생성(SSG), API 라우팅을 지원하여 초기 로딩 속도 개선 및 SEO 최적화에 용이하다. 또한 빠른 개발 속도와 유지보수성을 제공한다.                                                                                                                                                                                                                                                                                          |
+| UI 컴포넌트           | shadcn/ui                   | 재사용 가능한 UI 컴포넌트 라이브러리로, 디자인 시스템을 일관되게 유지하고 개발 생산성을 향상시킨다. Tailwind CSS와 통합되어 스타일링을 간편하게 할 수 있다.                                                                                                                                                                                                                                                                                           |
+| 아이콘                | lucide-react                | 고품질의 벡터 아이콘을 제공하며, React 컴포넌트 형태로 사용하기 간편하다.                                                                                                                                                                                                                                                                                                                                    |
+| 언어                  | TypeScript                  | 정적 타입 검사를 통해 코드의 안정성을 높이고, 개발 과정에서 오류를 사전에 발견할 수 있도록 돕는다. 코드 자동 완성 및 리팩토링 지원으로 개발 생산성을 향상시킨다.                                                                                                                                                                                                                                                                                         |
+| 스타일링              | Tailwind CSS                | 유틸리티 우선(Utility-first) CSS 프레임워크로, 컴포넌트 스타일링을 빠르고 효율적으로 할 수 있다. 반응형 디자인을 쉽게 구현할 수 있으며, 커스터마이징이 용이하다.                                                                                                                                                                                                                                                                                          |
+| 백엔드                | Supabase                    | 인증, 데이터베이스, 스토리지, 실시간 통신 등의 백엔드 기능을 제공하는 오픈 소스 Firebase 대안이다. PostgreSQL 기반으로 안정적이며, 사용하기 쉬운 API와 SDK를 제공한다. RLS(Row Level Security)를 통해 데이터 보안을 강화할 수 있다.                                                                                                                                                                                                                           |
+| 서버 상태 관리        | @tanstack/react-query       | 서버 상태를 효율적으로 관리하고 캐싱, 데이터 동기화 기능을 제공한다. API 요청 및 응답 처리를 간편하게 할 수 있으며, 사용자 경험을 향상시킨다.                                                                                                                                                                                                                                                                                                        |
+| 유틸리티              | es-toolkit                  | 다양한 유틸리티 함수를 제공하여 개발 편의성을 높인다. 문자열 처리, 날짜/시간 처리, 배열 처리 등 다양한 기능을 제공한다.                                                                                                                                                                                                                                                                                                                                  |
+| 날짜/시간 처리        | date-fns                    | 날짜 및 시간 처리를 위한 라이브러리로, 다양한 형식의 날짜/시간 변환 및 계산 기능을 제공한다. Moment.js에 비해 가볍고 모듈화되어 있어 번들 크기를 줄일 수 있다.                                                                                                                                                                                                                                                                                                   |
+| AI 모델 연동          | (추가 필요)                | GPT 모델 연동을 위한 라이브러리 또는 API 클라이언트를 추가해야 한다. OpenAI API를 직접 사용하거나, Langchain과 같은 추상화 레이어를 사용할 수 있다.                                                                                                                                                                                                                                                                                                     |
+
+## 3. System Architecture Design
+
+### Top-Level building blocks
+- **Frontend (Next.js Application)**:
+    - **UI Components**: shadcn/ui, lucide-react를 사용하여 사용자 인터페이스를 구성한다.
+    - **State Management**: @tanstack/react-query를 사용하여 서버 상태를 관리하고, React Context API를 사용하여 전역 상태를 관리한다.
+    - **Routing**: Next.js의 파일 기반 라우팅 시스템을 사용하여 페이지 간 이동을 처리한다.
+- **Backend (Supabase)**:
+    - **Authentication**: Supabase Auth를 사용하여 사용자 인증 및 권한 관리를 처리한다. OAuth를 지원하여 Google 계정 연동을 구현한다.
+    - **Database**: PostgreSQL 데이터베이스를 사용하여 사용자 데이터, 목표 데이터, 플래너 데이터 등을 저장한다. RLS(Row Level Security)를 적용하여 데이터 보안을 강화한다.
+    - **API**: Supabase Functions 또는 Next.js API Routes를 사용하여 클라이언트 요청을 처리하고 데이터베이스와 상호 작용한다.
+- **AI Integration (GPT 성장 코치)**:
+    - **GPT API**: OpenAI API 또는 Langchain을 사용하여 GPT 모델과 연동한다.
+    - **Prompt Engineering**: 사용자 입력 및 목표 데이터를 기반으로 GPT 모델에 적절한 프롬프트를 생성한다.
+    - **Response Processing**: GPT 모델의 응답을 파싱하고 사용자에게 적절한 형식으로 제공한다.
+
+### Top-Level Component Interaction Diagram
+
+```mermaid
+graph TD
+    A[Frontend (Next.js)] --> B[Backend (Supabase)]
+    A --> C[AI Integration (GPT API)]
+    B --> D[Database (PostgreSQL)]
+    C --> D
+```
+
+- **Frontend (Next.js)**: 사용자 인터페이스를 제공하고, 사용자 입력을 받아 API 요청을 Backend (Supabase) 또는 AI Integration (GPT API)로 전송한다.
+- **Backend (Supabase)**: 사용자 인증, 데이터베이스 쿼리, API 요청 처리를 담당한다. 데이터베이스 (PostgreSQL)에 데이터를 저장하고 검색한다.
+- **AI Integration (GPT API)**: 사용자 입력 및 목표 데이터를 기반으로 GPT 모델에 프롬프트를 전송하고, 응답을 받아 Frontend (Next.js)로 반환한다.
+- **Database (PostgreSQL)**: 사용자 데이터, 목표 데이터, 플래너 데이터 등을 저장한다. Supabase RLS를 통해 데이터 보안을 강화한다.
+
+### Code Organization & Convention
+**Domain-Driven Organization Strategy**
+- **Domain Separation**: 사용자 관리, 목표 관리, 플래너 관리, AI 코칭 등 비즈니스 도메인별로 코드를 분리한다.
+- **Layer-Based Architecture**: 프레젠테이션 레이어 (UI 컴포넌트), 비즈니스 로직 레이어 (서비스), 데이터 접근 레이어 (리포지토리), 인프라 레이어 (API 클라이언트)로 분리한다.
+- **Feature-Based Modules**: 각 기능별로 관련 파일들을 모듈화하여 관리한다. 예를 들어, 목표 관리 기능은 `src/modules/goals` 디렉토리에 관련 컴포넌트, 서비스, API를 포함한다.
+- **Shared Components**: 공통 유틸리티, 타입, 재사용 가능한 컴포넌트는 `src/shared` 디렉토리에 저장한다.
+
+**Universal File & Folder Structure**
+```
+/
+├── next.config.js
+├── package.json
+├── tsconfig.json
+├── .eslintrc.js
+├── src/
+│   ├── pages/                # Next.js 페이지 (라우팅)
+│   │   ├── api/              # API Routes
+│   │   ├── _app.tsx          # Custom App
+│   │   ├── _document.tsx     # Custom Document
+│   │   └── index.tsx         # 메인 페이지
+│   ├── components/           # 재사용 가능한 UI 컴포넌트
+│   │   ├── ui/               # shadcn/ui 컴포넌트
+│   │   ├── common/           # 공통 컴포넌트
+│   │   └── ...
+│   ├── modules/              # 도메인별 모듈
+│   │   ├── users/            # 사용자 관리
+│   │   │   ├── components/
+│   │   │   ├── services/
+│   │   │   ├── api/
+│   │   │   └── types/
+│   │   ├── goals/            # 목표 관리
+│   │   │   ├── components/
+│   │   │   ├── services/
+│   │   │   ├── api/
+│   │   │   └── types/
+│   │   ├── planner/          # 플래너 관리
+│   │   │   ├── components/
+│   │   │   ├── services/
+│   │   │   ├── api/
+│   │   │   └── types/
+│   │   └── coaching/         # AI 코칭
+│   │       ├── components/
+│   │       ├── services/
+│   │       ├── api/
+│   │       └── types/
+│   ├── shared/               # 공통 유틸리티 및 타입
+│   │   ├── utils/
+│   │   ├── types/
+│   │   ├── hooks/
+│   │   └── components/
+│   ├── styles/              # 전역 스타일
+│   │   └── globals.css
+│   └── lib/                 # Supabase 클라이언트 및 설정
+│       └── supabaseClient.ts
+└── public/
+    ├── images/
+    └── ...
+```
+
+### Data Flow & Communication Patterns
+- **Client-Server Communication**: 클라이언트는 API 요청을 통해 서버와 통신한다. Next.js API Routes 또는 Supabase Functions를 사용하여 API 엔드포인트를 정의한다.
+- **Database Interaction**: Supabase 클라이언트를 사용하여 PostgreSQL 데이터베이스와 상호 작용한다. @tanstack/react-query를 사용하여 데이터 캐싱 및 동기화를 처리한다.
+- **External Service Integration**: OpenAI API를 사용하여 GPT 모델과 연동한다. API 키를 안전하게 관리하고, 에러 처리 및 재시도 로직을 구현한다.
+- **Real-time Communication**: (MVP 범위 외) 실시간 협업 코멘트 기능을 위해 Supabase Realtime 또는 WebSocket을 사용할 수 있다.
+- **Data Synchronization**: @tanstack/react-query를 사용하여 서버 상태와 클라이언트 상태를 동기화한다. 데이터 변경 시 자동으로 UI를 업데이트한다.
+
+## 4. Performance & Optimization Strategy
+- **Code Splitting**: Next.js의 코드 스플리팅 기능을 활용하여 초기 로딩에 필요한 코드만 로드하고, 나머지 코드는 필요할 때 동적으로 로드한다.
+- **Image Optimization**: Next.js의 Image 컴포넌트를 사용하여 이미지 크기를 최적화하고, lazy loading을 적용하여 초기 로딩 속도를 개선한다.
+- **Caching**: @tanstack/react-query를 사용하여 API 응답을 캐싱하고, CDN을 사용하여 정적 자원을 캐싱한다.
+- **Database Optimization**: 데이터베이스 쿼리를 최적화하고, 인덱싱을 적용하여 검색 속도를 향상시킨다. Supabase RLS를 사용하여 데이터 접근 권한을 제한하고, 불필요한 데이터 로드를 방지한다.
+
+## 5. Implementation Roadmap & Milestones
+### Phase 1: Foundation (MVP Implementation)
+- **Core Infrastructure**: Next.js 프로젝트 설정, Supabase 프로젝트 설정, 인증 기능 구현, 데이터베이스 스키마 정의
+- **Essential Features**: AI 루틴 자동화 플래너, GPT 성장 코치 챗봇, 성장 대시보드 기본 기능 구현, 개인 Free/Pro 결제 플로우 구현
+- **Basic Security**: Supabase RLS 적용, 암호화 적용, API 키 보안 관리
+- **Development Setup**: 개발 환경 설정, CI/CD 파이프라인 구축 (Vercel 또는 Netlify)
+- **Timeline**: 5~10주
+
+### Phase 2: Feature Enhancement
+- **Advanced Features**: AI 추천 시스템 구현, 캘린더·노션·n8n 연동 구현, 팀 계정 구조 구현 (결제는 후행)
+- **Performance Optimization**: 코드 스플리팅, 이미지 최적화, 캐싱 전략 적용, 데이터베이스 쿼리 최적화
+- **Enhanced Security**: 추가적인 보안 기능 구현 (예: rate limiting, XSS 방지), ISO27001 준비
+- **Monitoring Implementation**: 로깅 및 모니터링 시스템 구축 (Sentry 또는 Datadog)
+- **Timeline**: 13~16주
+
+## 6. Risk Assessment & Mitigation Strategies
+### Technical Risk Analysis
+- **Technology Risks**:
+    - GPT 모델의 응답 품질 저하: 사용자 피드백 루프 구축, 프롬프트 엔지니어링 개선, 모델 재학습
+    - Supabase 의존성: Supabase 장애 발생 시 서비스 중단 가능성, 백업 및 복구 전략 수립, 다른 백엔드 서비스로의 전환 가능성 고려
+- **Performance Risks**:
+    - 초기 로딩 속도 저하: 코드 스플리팅, 이미지 최적화, 캐싱 전략 적용
+    - API 응답 시간 지연: 데이터베이스 쿼리 최적화, API 엔드포인트 캐싱
+- **Security Risks**:
+    - 개인정보 유출: Supabase RLS 적용, 데이터 암호화, 정기적인 보안 감사
+    - XSS 공격: 입력 값 검증, HTML 이스케이프 처리
+- **Integration Risks**:
+    - 외부 서비스 API 장애: 에러 처리 및 재시도 로직 구현, 대체 API 사용 고려
+- **Mitigation Strategies**:
+    - 기술적 문제 발생 시 빠른 해결을 위한 기술 지원팀 운영
+    - 코드 리뷰 및 테스트 자동화를 통해 코드 품질 유지
+    - 정기적인 보안 점검 및 취약점 분석
+
+### Project Delivery Risks
+- **Timeline Risks**:
+    - 개발 일정 지연: 스프린트 계획, 데일리 스크럼, 칸반 보드 사용
+    - 요구사항 변경: 변경 관리 프로세스 수립, 우선순위 재조정
+- **Resource Risks**:
+    - 개발 인력 부족: 추가 인력 확보, 아웃소싱 고려
+    - 핵심 개발자 이탈: 지식 공유 및 문서화, 백업 개발자 지정
+- **Quality Risks**:
+    - 코드 품질 저하: 코드 리뷰, 테스트 자동화, 코딩 컨벤션 준수
+    - 버그 발생: QA 테스트, 유닛 테스트, 통합 테스트
+- **Deployment Risks**:
+    - 배포 실패: 롤백 전략 수립, 스테이징 환경 테스트
+    - 환경 설정 오류: IaC (Infrastructure as Code) 도구 사용 (Terraform 또는 Pulumi)
+- **Contingency Plans**:
+    - 계획 변경 시 유연하게 대처할 수 있도록 예비 자원 확보
+    - 위험 발생 시 신속하게 대응할 수 있도록 비상 연락망 구축
+

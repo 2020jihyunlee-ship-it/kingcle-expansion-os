@@ -1,0 +1,16 @@
+{
+  "daily": [
+    { "id": "d1", "title": "아침 루틴 체크", "timestamp": "07:30", "completed": true },
+    { "id": "d2", "title": "25분 집중 세션", "timestamp": "10:00", "completed": true },
+    { "id": "d3", "title": "회고 메모", "timestamp": "18:00", "completed": true }
+  ],
+  "weekly": [
+    { "id": "w1", "title": "주간 목표 점검", "timestamp": "월 09:00", "completed": false },
+    { "id": "w2", "title": "학습 콘텐츠 2개", "timestamp": "수 20:00", "completed": false },
+    { "id": "w3", "title": "헬스 3회", "timestamp": "토 11:00", "completed": true }
+  ],
+  "monthly": [
+    { "id": "m1", "title": "월간 리포트", "timestamp": "매월 말", "completed": false },
+    { "id": "m2", "title": "사이드 프로젝트 마일스톤", "timestamp": "15일", "completed": false }
+  ]
+}

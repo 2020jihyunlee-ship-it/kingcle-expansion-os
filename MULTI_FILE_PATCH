@@ -1,0 +1,171 @@
+'use client'
+
+type PageParams = Promise<Record<string, string>>
+
+export default function SettingsPage({ params }: { params: PageParams }) {
+  void params
+  return (
+    <main className="mx-auto max-w-3xl px-4 py-8">
+      <h1 className="text-2xl font-semibold">Settings</h1>
+      <p className="text-muted-foreground mt-2">프로필 & 요금제</p>
+
+      <section className="mt-6 space-y-4">
+        <div className="rounded-lg border p-4">
+          <h2 className="font-medium">프로필</h2>
+          <div className="mt-2 grid gap-3 md:grid-cols-2">
+            <input placeholder="이름" className="rounded-md border px-3 py-2" />
+            <input placeholder="이메일" className="rounded-md border px-3 py-2" />
+          </div>
+        </div>
+        <div className="rounded-lg border p-4">
+          <h2 className="font-medium">요금제</h2>
+          <p className="text-sm text-muted-foreground">현재: Free</p>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+'use client'
+
+type PageParams = Promise<Record<string, string>>
+
+export default function TeamPage({ params }: { params: PageParams }) {
+  void params
+  return (
+    <main className="mx-auto max-w-5xl px-4 py-8">
+      <h1 className="text-2xl font-semibold">Team</h1>
+      <p className="text-muted-foreground mt-2">팀 대시보드 & 멤버 관리</p>
+
+      <div className="mt-6 overflow-x-auto">
+        <table className="w-full border text-left text-sm">
+          <thead>
+            <tr className="bg-muted/40">
+              <th className="p-2">이름</th>
+              <th className="p-2">역할</th>
+              <th className="p-2">상태</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              ['Alice', 'Admin', 'Active'],
+              ['Bob', 'Member', 'Invited'],
+              ['Carol', 'Member', 'Active'],
+            ].map((row, i) => (
+              <tr key={i} className="border-t">
+                {row.map((cell, j) => (
+                  <td key={j} className="p-2">
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </main>
+  )
+}
+
+'use client'
+
+type PageParams = Promise<Record<string, string>>
+
+export default function CoachPage({ params }: { params: PageParams }) {
+  void params
+  return (
+    <main className="mx-auto max-w-4xl px-4 py-8">
+      <h1 className="text-2xl font-semibold">Coach</h1>
+      <p className="text-muted-foreground mt-2">GPT 성장 코치 챗봇</p>
+
+      <div className="mt-6 space-y-4">
+        {[
+          { role: 'coach', text: '안녕하세요! 오늘 목표는 어떻게 진행 중인가요?' },
+          { role: 'user', text: '주간 목표의 60%를 완료했어요.' },
+        ].map((m, i) => (
+          <div
+            key={i}
+            className={
+              m.role === 'coach'
+                ? 'mr-auto max-w-[80%] rounded-lg border bg-muted/30 p-3'
+                : 'ml-auto max-w-[80%] rounded-lg border p-3'
+            }
+          >
+            <div className="text-sm text-muted-foreground">{m.role}</div>
+            <div>{m.text}</div>
+          </div>
+        ))}
+      </div>
+
+      <form className="sticky bottom-0 mt-6 flex gap-2">
+        <input
+          type="text"
+          className="w-full rounded-md border px-3 py-2"
+          placeholder="메시지를 입력하세요"
+        />
+        <button className="rounded-md bg-black px-4 py-2 text-white">Send</button>
+      </form>
+    </main>
+  )
+}
+
+'use client'
+
+type PageParams = Promise<Record<string, string>>
+
+export default function PlannerPage({ params }: { params: PageParams }) {
+  void params
+  return (
+    <main className="mx-auto max-w-5xl px-4 py-8">
+      <h1 className="text-2xl font-semibold">Planner</h1>
+      <p className="text-muted-foreground mt-2">AI 루틴 자동화 플래너</p>
+
+      <div className="mt-6 space-y-3">
+        {Array.from({ length: 5 }).map((_, idx) => (
+          <label key={idx} className="flex items-start gap-3 rounded-md border p-3">
+            <input type="checkbox" className="mt-1" />
+            <div>
+              <div className="font-medium">체크리스트 항목 {idx + 1}</div>
+              <div className="text-sm text-muted-foreground">설명 텍스트</div>
+            </div>
+          </label>
+        ))}
+      </div>
+    </main>
+  )
+}
+
+'use client'
+
+type PageParams = Promise<Record<string, string>>
+
+export default function DashboardPage({ params }: { params: PageParams }) {
+  void params
+  return (
+    <main className="mx-auto max-w-6xl px-4 py-8">
+      <h1 className="text-2xl font-semibold">Dashboard</h1>
+      <p className="text-muted-foreground mt-2">목표 달성 현황 한눈에 보기</p>
+
+      <section className="mt-8 grid gap-6 md:grid-cols-2">
+        <div className="rounded-lg border p-4">
+          <h2 className="font-medium">KPI 카드</h2>
+          <p className="text-sm text-muted-foreground">완료율, 진행 중 등</p>
+        </div>
+        <div className="rounded-lg border p-4">
+          <h2 className="font-medium">KPI 카드</h2>
+          <p className="text-sm text-muted-foreground">주간 변화량 등</p>
+        </div>
+        <div className="rounded-lg border p-4 md:col-span-2">
+          <h2 className="mb-3 font-medium">트렌드 차트</h2>
+          <img
+            src="https://picsum.photos/seed/chart/800/360"
+            alt="trend placeholder"
+            className="h-auto w-full rounded-md"
+          />
+        </div>
+      </section>
+    </main>
+  )
+}
+
+
